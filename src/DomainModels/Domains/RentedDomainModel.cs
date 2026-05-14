@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace DomainModels.Domains
 {
-    public class RentedDomain
+
+    public class RentedDomainModel
     {
         public Guid Id { get; }
 
         public required Guid DomainId { get; set; }
+
+        [ForeignKey(nameof(DomainId)), JsonIgnore]
+        public DomainModel Domain { get; set; }
 
         [Column("from")]
         public required DateOnly StartOfRenting { get; set; }
