@@ -16,7 +16,6 @@ namespace DataAccess.SQLite
             services.AddDbContext<AppDbContext>();
 
             services.AddScoped<IDomainsRepository, DomainsRepository>();
-            services.AddScoped<IRentedDomainsRepository, RentedDomainsRepository>();
 
             return services;
         }
