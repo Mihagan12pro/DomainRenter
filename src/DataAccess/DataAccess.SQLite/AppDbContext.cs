@@ -6,7 +6,7 @@ namespace DataAccess.SQLite
 {
     internal class AppDbContext : DbContext
     {
-        public DbSet<RentedDomainModel> Domains { get; set; }
+        public DbSet<DomainModel> Domains { get; set; }
 
         public DbSet<RentedDomainModel> RentedDomains { get; set; }
 
