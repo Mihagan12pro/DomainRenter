@@ -1,6 +1,7 @@
 ﻿using Contracts.Domains;
 using DataAccess.Abstractions.Domains;
 using DomainModels.Domains;
+using HelpEntities;
 using System.Linq.Expressions;
 
 namespace Services.Domains
@@ -26,10 +27,13 @@ namespace Services.Domains
             throw new NotImplementedException();
         }
 
-        public async Task<string> RentDomainAsync(
+        public async Task<Result<string, string>> RentDomainAsync(
             RentDomainDto rentDomainDto, 
             CancellationToken cancellationToken)
         {
+            var result = new Result<string, string>();
+            string message = "The domain had been rented!";
+
             var domainModel = await _domainsRepository.GetByNameAsync(rentDomainDto.DomainName, cancellationToken);
             if (domainModel == null)
             {
@@ -39,7 +43,7 @@ namespace Services.Domains
 
                     await _domainsRepository.AddAsync(rentDomainDto.DomainName, cancellationToken);
 
-
+                    result.Value = message;
                 }
                 finally
                 {
@@ -48,10 +52,28 @@ namespace Services.Domains
             }
             else
             {
+                if (domainModel.RentedDomain == null)
+                {
+                    try
+                    {
+                        await _semaphore.WaitAsync();
 
+                        await _domainsRepository.AddAsync(rentDomainDto.DomainName, cancellationToken);
+
+                        result.Value = message;
+                    }
+                    finally
+                    {
+                        _semaphore.Release();
+                    }
+                }
+                else
+                {
+                    result.Fail = message;
+                }
             }
 
-                throw new NotImplementedException();
+            return result;
         }
 
         public DomainsService(IDomainsRepository domainsRepository)

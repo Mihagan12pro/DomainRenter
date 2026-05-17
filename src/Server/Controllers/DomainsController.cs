@@ -10,16 +10,20 @@ namespace Server.Controllers
     {
         private readonly IDomainsService _domainsService;
 
+        [HttpPost]
         public async Task<IActionResult> Rent(
             string domainName, 
             DateOnly endRent,
             CancellationToken cancellationToken)
         {
-            await _domainsService.RentDomainAsync(
+            var result = await _domainsService.RentDomainAsync(
                 new RentDomainDto(domainName, endRent),
                 cancellationToken);
 
-            return Ok();
+            if (result.IsSuccess)
+                return Ok(result.Value);
+
+            return Conflict(result.Fail);
         }
 
         public DomainsController(IDomainsService domainsService)
