@@ -6,7 +6,7 @@ namespace DomainModels.Domains
 
     public class RentedDomainModel
     {
-        public Guid Id { get; }
+        public Guid Id { get; private set; }
 
         public required Guid DomainId { get; set; }
 

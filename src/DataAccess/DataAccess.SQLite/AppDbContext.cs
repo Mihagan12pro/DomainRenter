@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace DataAccess.SQLite
 {
-    internal class AppDbContext : DbContext
+    public class AppDbContext : DbContext
     {
         public DbSet<DomainModel> Domains { get; set; }
 
@@ -12,9 +12,8 @@ namespace DataAccess.SQLite
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlite("database.db");
-
-            Database.Migrate();
+            optionsBuilder.UseSqlite("Data Source=database.db");
+            SQLitePCL.Batteries.Init();
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

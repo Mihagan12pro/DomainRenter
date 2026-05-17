@@ -4,7 +4,7 @@ namespace DomainModels.Domains
 {
     public class DomainModel
     {
-        public Guid Id { get; }
+        public Guid Id { get; private set; }
 
         public required string Name { get; set; }
 

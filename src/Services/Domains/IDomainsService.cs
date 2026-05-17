@@ -1,11 +1,7 @@
 ﻿using Contracts.Domains;
 using DomainModels.Domains;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+using HelpEntities;
 using System.Linq.Expressions;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Services.Domains
 {
@@ -15,7 +11,7 @@ namespace Services.Domains
             Expression<Func<bool, DomainModel>> filters,
             CancellationToken cancellationToken);
 
-        Task<string> RentDomainAsync(
+        Task<Result<string, string>> RentDomainAsync(
             RentDomainDto rentDomainDto,
             CancellationToken cancellationToken);
     }
