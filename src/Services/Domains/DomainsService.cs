@@ -13,13 +13,6 @@ namespace Services.Domains
         private readonly SemaphoreSlim _semaphore
             = new SemaphoreSlim(1, 1);
 
-        public Task AddDomainAsync(
-            DomainModel domain, 
-            CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
-
         public Task GetDomainsAsync(
             Expression<Func<bool, DomainModel>> filters,
             CancellationToken cancellationToken)
@@ -41,7 +34,8 @@ namespace Services.Domains
                 {
                     await _semaphore.WaitAsync();
 
-                    await _domainsRepository.AddAsync(rentDomainDto.DomainName, cancellationToken);
+                    Guid id = await _domainsRepository.AddAsync(rentDomainDto.DomainName, cancellationToken);
+                    await _domainsRepository.RentAsync(id, rentDomainDto.EndRentDate, cancellationToken);
 
                     result.Value = message;
                 }
@@ -58,7 +52,7 @@ namespace Services.Domains
                     {
                         await _semaphore.WaitAsync();
 
-                        await _domainsRepository.AddAsync(rentDomainDto.DomainName, cancellationToken);
+                        await _domainsRepository.RentAsync(domainModel.Id, rentDomainDto.EndRentDate, cancellationToken);
 
                         result.Value = message;
                     }
