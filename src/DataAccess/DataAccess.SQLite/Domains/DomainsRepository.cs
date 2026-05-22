@@ -62,6 +62,8 @@ namespace DataAccess.SQLite.Domains
 
             await _appContext.RentedDomains.AddAsync(rentedDomain, cancellationToken);
 
+            await _appContext.SaveChangesAsync(cancellationToken);
+
             return rentedDomain.DomainId;
         }
 
