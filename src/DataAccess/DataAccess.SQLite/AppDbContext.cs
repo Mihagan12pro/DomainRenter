@@ -20,5 +20,10 @@ namespace DataAccess.SQLite
             => modelBuilder.ApplyConfigurationsFromAssembly(
                 Assembly.GetExecutingAssembly()
                 );
+
+        public AppDbContext()
+        {
+            Database.Migrate();
+        }
     }
 }
