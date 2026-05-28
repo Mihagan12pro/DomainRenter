@@ -12,12 +12,11 @@ namespace Server.Controllers
 
         [HttpPost]
         public async Task<IActionResult> Rent(
-            string domainName, 
-            DateOnly endRent,
+            [FromBody] RentDomainDto request,
             CancellationToken cancellationToken)
         {
             var result = await _domainsService.RentDomainAsync(
-                new RentDomainDto(domainName, endRent),
+                request,
                 cancellationToken);
 
             if (result.IsSuccess)

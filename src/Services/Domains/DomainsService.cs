@@ -63,7 +63,7 @@ namespace Services.Domains
                 }
                 else
                 {
-                    result.Fail = message;
+                    result.Fail = "This domain had been already rented!";
                 }
             }
 
