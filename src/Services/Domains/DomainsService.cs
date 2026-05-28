@@ -46,7 +46,7 @@ namespace Services.Domains
             }
             else
             {
-                if (domainModel.RentedDomain == null)
+                if (!await _domainsRepository.IsRentedAsync(domainModel.Id, cancellationToken))
                 {
                     try
                     {
