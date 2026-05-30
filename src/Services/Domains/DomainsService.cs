@@ -1,8 +1,10 @@
 ﻿using Contracts.Domains;
+using CSharpFunctionalExtensions;
 using DataAccess.Abstractions.Domains;
 using DomainModels.Domains;
-using HelpEntities;
 using System.Linq.Expressions;
+using Utils.Errors;
+using Utils.Success;
 
 namespace Services.Domains
 {
@@ -20,11 +22,12 @@ namespace Services.Domains
             throw new NotImplementedException();
         }
 
-        public async Task<Result<string, string>> RentDomainAsync(
+        public async Task<Result<Success<string>, ErrorsCollection>> RentDomainAsync(
             RentDomainDto rentDomainDto, 
             CancellationToken cancellationToken)
         {
-            var result = new Result<string, string>();
+            Result<Success<string>, ErrorsCollection> result;
+
             string message = "The domain had been rented!";
 
             var domainModel = await _domainsRepository.GetByNameAsync(rentDomainDto.DomainName, cancellationToken);
@@ -37,7 +40,7 @@ namespace Services.Domains
                     Guid id = await _domainsRepository.AddAsync(rentDomainDto.DomainName, cancellationToken);
                     await _domainsRepository.RentAsync(id, rentDomainDto.EndRentDate, cancellationToken);
 
-                    result.Value = message;
+                    result = new Success<string>(message);
                 }
                 finally
                 {
@@ -54,7 +57,7 @@ namespace Services.Domains
 
                         await _domainsRepository.RentAsync(domainModel.Id, rentDomainDto.EndRentDate, cancellationToken);
 
-                        result.Value = message;
+                        result = new Success<string>(message);
                     }
                     finally
                     {
@@ -63,7 +66,7 @@ namespace Services.Domains
                 }
                 else
                 {
-                    result.Fail = "This domain had been already rented!";
+                    result = new ErrorsCollection(409, "This domain had been already rented!");
                 }
             }
 
