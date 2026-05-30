@@ -1,14 +1,15 @@
 ﻿using DataAccess.Abstractions.Domains;
 using DomainModels.Domains;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace DataAccess.SQLite.Domains
 {
-    internal class DomainsRepository : IDomainsRepository
+    internal class SQLiteDomainsRepository : IDomainsRepository
     {
         private readonly AppDbContext _appContext;
 
-        public DomainsRepository(AppDbContext appContext)
+        public SQLiteDomainsRepository(AppDbContext appContext)
         {
             _appContext = appContext;
         }
@@ -76,6 +77,24 @@ namespace DataAccess.SQLite.Domains
             _appContext.RentedDomains.Remove(model);
 
             await _appContext.SaveChangesAsync(cancellationToken);
+        }
+
+        public async Task<IEnumerable<DomainModel>> GetAllAsync(
+            Expression<Func<DomainModel, bool>> filter, 
+            CancellationToken cancellationToken)
+        {
+            var domains = _appContext.Domains.Where(filter);
+
+            return domains;
+        }
+
+        public async Task<IEnumerable<RentedDomainModel>> GetRentedAsync(
+            Expression<Func<RentedDomainModel, bool>> filter, 
+            CancellationToken cancellationToken)
+        {
+            var rented = _appContext.RentedDomains.Where(filter);
+
+            return rented;
         }
     }
 }

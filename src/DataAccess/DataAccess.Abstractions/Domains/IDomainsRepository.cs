@@ -1,4 +1,5 @@
 ﻿using DomainModels.Domains;
+using System.Linq.Expressions;
 
 namespace DataAccess.Abstractions.Domains
 {
@@ -23,6 +24,14 @@ namespace DataAccess.Abstractions.Domains
 
         Task EndRentAsync(
             Guid id,
+            CancellationToken cancellationToken);
+
+        Task<IEnumerable<DomainModel>> GetAllAsync(
+            Expression<Func<DomainModel, bool>> filters,
+            CancellationToken cancellationToken);
+
+        Task<IEnumerable<RentedDomainModel>> GetRentedAsync(
+            Expression<Func<RentedDomainModel, bool>> filters,
             CancellationToken cancellationToken);
     }
 }
