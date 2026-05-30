@@ -24,20 +24,11 @@ namespace Services.Hosted
                         (rd => rd.EndOfRenting <= now),
                         stoppingToken);
 
-                    var deletingTasks = expired.Select(rd => EndRentAsync(rd.Id, stoppingToken));
-
-                    await Task.WhenAll(deletingTasks);
+                    foreach(var e in expired)
+                    {
+                        await domainsRepository.EndRentAsync(e.DomainId, stoppingToken);
+                    }
                 }
-            }
-        }
-
-        private async Task EndRentAsync(Guid id, CancellationToken stoppingToken)
-        {
-            using (var scope = _serviceScopeFactory.CreateScope())
-            {
-                IDomainsRepository domainsRepository = scope.ServiceProvider.GetRequiredService<IDomainsRepository>();
-
-                await domainsRepository.EndRentAsync(id, stoppingToken); 
             }
         }
 

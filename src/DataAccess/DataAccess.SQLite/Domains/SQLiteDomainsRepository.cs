@@ -1,6 +1,7 @@
 ﻿using DataAccess.Abstractions.Domains;
 using DomainModels.Domains;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq.Expressions;
 
 namespace DataAccess.SQLite.Domains
@@ -72,11 +73,15 @@ namespace DataAccess.SQLite.Domains
             Guid id, 
             CancellationToken cancellationToken)
         {
-            var model = await _appContext.RentedDomains.FirstOrDefaultAsync(rd => rd.Id == id, cancellationToken);
 
-            _appContext.RentedDomains.Remove(model);
+            RentedDomainModel rentedDomain = await _appContext.RentedDomains.FirstOrDefaultAsync(rd => rd.DomainId == id);
 
-            await _appContext.SaveChangesAsync(cancellationToken);
+            if (rentedDomain != null)
+            {
+                _appContext.RentedDomains.Remove(rentedDomain);
+
+                await _appContext.SaveChangesAsync(cancellationToken);
+            }
         }
 
         public async Task<IEnumerable<DomainModel>> GetAllAsync(
