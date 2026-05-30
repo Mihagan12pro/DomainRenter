@@ -16,7 +16,7 @@ namespace Services.Domains
         private readonly SemaphoreSlim _semaphore
             = new SemaphoreSlim(1, 1);
 
-        public async Task<Result<Success<string>, ErrorsCollection>> RentDomainAsync(
+        public async Task<Result<Success, ErrorsCollection>> RentDomainAsync(
             RentDomainDto rentDomainDto, 
             CancellationToken cancellationToken)
         {
@@ -27,7 +27,7 @@ namespace Services.Domains
             }
 
             string message = "The domain had been rented!";
-            Result<Success<string>, ErrorsCollection> result;
+            Result<Success, ErrorsCollection> result;
 
             var domainModel = await _domainsRepository.GetByNameAsync(rentDomainDto.DomainName, cancellationToken);
             if (domainModel == null)
@@ -39,7 +39,7 @@ namespace Services.Domains
                     Guid id = await _domainsRepository.AddAsync(rentDomainDto.DomainName, cancellationToken);
                     await _domainsRepository.RentAsync(id, rentDomainDto.EndRentDate, cancellationToken);
 
-                    result = new Success<string>(message);
+                    result = new Success();
                 }
                 finally
                 {
@@ -56,7 +56,7 @@ namespace Services.Domains
 
                         await _domainsRepository.RentAsync(domainModel.Id, rentDomainDto.EndRentDate, cancellationToken);
 
-                        result = new Success<string>(message);
+                        result = new Success();
                     }
                     finally
                     {
@@ -84,6 +84,23 @@ namespace Services.Domains
             bool rented = await _domainsRepository.IsRentedAsync(domain.Id, cancellationToken);
 
             return new Success<GetDomainDto>(new GetDomainDto(domain.Name, rented));
+        }
+
+        public async Task<Result<Success, ErrorsCollection>> EndRentAsync(
+            string name,
+            CancellationToken cancellationToken)
+        {
+            DomainModel domain = await _domainsRepository.GetByNameAsync(name, cancellationToken);
+
+            if (domain == null)
+                return new ErrorsCollection(404, $"This domain does not exists!");
+
+            if (!await _domainsRepository.IsRentedAsync(domain.Id, cancellationToken))
+                return new ErrorsCollection(409, $"This domain does not rented!");
+
+            await _domainsRepository.EndRentAsync(domain.Id, cancellationToken);
+
+            return new Success();
         }
 
         public DomainsService(

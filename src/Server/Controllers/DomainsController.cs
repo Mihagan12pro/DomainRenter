@@ -39,6 +39,19 @@ namespace Server.Controllers
             return this.MapWithResult(result.Value);
         }
 
+        [HttpDelete("{name}")]
+        public async Task<IActionResult> EndRentAsync(
+            [FromRoute] string name,
+            CancellationToken cancellationToken)
+        {
+            var result = await _domainsService.EndRentAsync(name, cancellationToken);
+
+            if (result.IsFailure)
+                return this.MapWithResult(result.Error);
+
+            return this.MapWithResult(result.Value);
+        }
+
         public DomainsController(IDomainsService domainsService)
         {
             _domainsService = domainsService;

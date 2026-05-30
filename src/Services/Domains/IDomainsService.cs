@@ -7,11 +7,15 @@ namespace Services.Domains
 {
     public interface IDomainsService
     {
-        Task<Result<Success<string>, ErrorsCollection>> RentDomainAsync(
+        Task<Result<Success, ErrorsCollection>> RentDomainAsync(
             RentDomainDto rentDomainDto,
             CancellationToken cancellationToken);
 
         Task<Result<Success<GetDomainDto>, ErrorsCollection>> GetByNameAsync(
+            string name,
+            CancellationToken cancellationToken);
+
+        Task<Result<Success, ErrorsCollection>> EndRentAsync(
             string name,
             CancellationToken cancellationToken);
     }
