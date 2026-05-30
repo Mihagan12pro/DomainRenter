@@ -2,6 +2,7 @@
 using CSharpFunctionalExtensions;
 using DataAccess.Abstractions.Domains;
 using DomainModels.Domains;
+using FluentValidation;
 using System.Linq.Expressions;
 using Utils.Errors;
 using Utils.Success;
@@ -11,6 +12,7 @@ namespace Services.Domains
     internal class DomainsService : IDomainsService
     {
         private readonly IDomainsRepository _domainsRepository;
+        private readonly IValidator<RentDomainDto> _rentDomainValidator;
 
         private readonly SemaphoreSlim _semaphore
             = new SemaphoreSlim(1, 1);
@@ -26,9 +28,14 @@ namespace Services.Domains
             RentDomainDto rentDomainDto, 
             CancellationToken cancellationToken)
         {
-            Result<Success<string>, ErrorsCollection> result;
+            var validationResult = await _rentDomainValidator.ValidateAsync(rentDomainDto, cancellationToken);
+            if (!validationResult.IsValid)
+            {
+                return new ErrorsCollection(400, validationResult.Errors.Select(e => e.ErrorMessage).ToArray());
+            }
 
             string message = "The domain had been rented!";
+            Result<Success<string>, ErrorsCollection> result;
 
             var domainModel = await _domainsRepository.GetByNameAsync(rentDomainDto.DomainName, cancellationToken);
             if (domainModel == null)
@@ -73,9 +80,12 @@ namespace Services.Domains
             return result;
         }
 
-        public DomainsService(IDomainsRepository domainsRepository)
+        public DomainsService(
+            IDomainsRepository domainsRepository,
+            IValidator<RentDomainDto> rentDomainValidator)
         {
             _domainsRepository = domainsRepository;
+            _rentDomainValidator = rentDomainValidator;
         }
     }
 }
