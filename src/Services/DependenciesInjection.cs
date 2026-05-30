@@ -2,6 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using FluentValidation;
 using Services.Domains;
+using Services.Hosted;
 
 namespace Services
 {
@@ -10,6 +11,8 @@ namespace Services
         public static IServiceCollection AddServices(this IServiceCollection services)
         {
             services.AddValidatorsFromAssembly(typeof(DependenciesInjection).Assembly);
+
+            services.AddHostedService<DomainExpiryCheckService>();
 
             services.AddScoped<IDomainsService, DomainsService>();
             services.AddSQLiteServices();
