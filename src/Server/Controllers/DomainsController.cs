@@ -1,5 +1,6 @@
 ﻿using Contracts.Domains;
 using Microsoft.AspNetCore.Mvc;
+using Server.Extensions;
 using Services.Domains;
 
 namespace Server.Controllers
@@ -19,10 +20,10 @@ namespace Server.Controllers
                 request,
                 cancellationToken);
 
-            if (result.IsSuccess)
-                return Ok(result.Value);
+            if (result.IsFailure)
+                return this.MapWithResult(result.Error);
 
-            return Conflict(result.Fail);
+            return this.MapWithResult(result.Value);
         }
 
         public DomainsController(IDomainsService domainsService)
