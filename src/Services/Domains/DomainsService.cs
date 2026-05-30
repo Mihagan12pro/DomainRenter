@@ -3,7 +3,6 @@ using CSharpFunctionalExtensions;
 using DataAccess.Abstractions.Domains;
 using DomainModels.Domains;
 using FluentValidation;
-using System.Linq.Expressions;
 using Utils.Errors;
 using Utils.Success;
 
@@ -16,13 +15,6 @@ namespace Services.Domains
 
         private readonly SemaphoreSlim _semaphore
             = new SemaphoreSlim(1, 1);
-
-        public Task GetDomainsAsync(
-            Expression<Func<bool, DomainModel>> filters,
-            CancellationToken cancellationToken)
-        {
-            throw new NotImplementedException();
-        }
 
         public async Task<Result<Success<string>, ErrorsCollection>> RentDomainAsync(
             RentDomainDto rentDomainDto, 
@@ -78,6 +70,20 @@ namespace Services.Domains
             }
 
             return result;
+        }
+
+        public async Task<Result<Success<GetDomainDto>, ErrorsCollection>> GetByNameAsync(
+            string name, 
+            CancellationToken cancellationToken)
+        {
+            DomainModel domain = await _domainsRepository.GetByNameAsync(name, cancellationToken);
+
+            if (domain == null)
+                return new ErrorsCollection(404, $"This domain does not exists!");
+
+            bool rented = await _domainsRepository.IsRentedAsync(domain.Id, cancellationToken);
+
+            return new Success<GetDomainDto>(new GetDomainDto(domain.Name, rented));
         }
 
         public DomainsService(

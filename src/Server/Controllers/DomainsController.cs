@@ -26,6 +26,19 @@ namespace Server.Controllers
             return this.MapWithResult(result.Value);
         }
 
+        [HttpGet("{name}")]
+        public async Task<IActionResult> GetByName(
+            [FromRoute] string name, 
+            CancellationToken cancellationToken)
+        {
+            var result = await _domainsService.GetByNameAsync(name, cancellationToken);
+
+            if (result.IsFailure)
+                return this.MapWithResult(result.Error);
+
+            return this.MapWithResult(result.Value);
+        }
+
         public DomainsController(IDomainsService domainsService)
         {
             _domainsService = domainsService;
