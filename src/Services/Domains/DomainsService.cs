@@ -131,12 +131,24 @@ namespace Services.Domains
             return paginated;
         }
 
-        public Task<PaginatedCollection<GetDomainDto>> GetDomainsAsync(
+        public async Task<PaginatedCollection<GetDomainDto>> GetDomainsAsync(
             DomainFiltersDto domainFilters,
             Pagination<GetDomainDto> pagination, 
             CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            List<Expression<Func<DomainModel, bool>>> filtersList = new();
+
+            if (domainFilters.Name != null)
+                filtersList.Add(
+                    (d) => d.Name.StartsWith(domainFilters.Name)
+                );
+
+            var paginatedDomains = await _domainsRepository.GetAllAsync(
+                filtersList, 
+                new Pagination<DomainModel>(pagination.Page, pagination.Size),
+                cancellationToken);
+
+            return new PaginatedCollection<GetDomainDto>(paginatedDomains.Collection, paginatedDomains.TotalCount, paginatedDomains.Page);
         }
 
         public DomainsService(

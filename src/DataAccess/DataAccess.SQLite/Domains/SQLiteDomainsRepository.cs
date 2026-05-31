@@ -1,9 +1,10 @@
-﻿using DataAccess.Abstractions.Domains;
+﻿using Contracts.Domains;
+using DataAccess.Abstractions.Domains;
 using DomainModels.Domains;
 using Microsoft.EntityFrameworkCore;
-using System;
 using System.Linq.Expressions;
 using Utils.Pagination;
+using Utils.Pagination.Collections;
 using Utils.Pagination.Collections.Types.Domains;
 
 namespace DataAccess.SQLite.Domains
@@ -86,7 +87,7 @@ namespace DataAccess.SQLite.Domains
             }
         }
 
-        public async Task<PaginatedDomains> GetAllAsync(
+        public async Task<PaginatedCollection<GetDomainDto>> GetAllAsync(
             IEnumerable<Expression<Func<DomainModel, bool>>> filters,
             Pagination<DomainModel> pagination, CancellationToken cancellationToken)
         {
@@ -100,8 +101,12 @@ namespace DataAccess.SQLite.Domains
 
             list = pagination.Apply(list);
 
-            PaginatedDomains paginatedDomains = new PaginatedDomains(
-                list,
+            var taskIsRented = list.Select(async d => new GetDomainDto(d.Name, await _appContext.RentedDomains.AnyAsync(rd => rd.DomainId == d.Id)));
+            
+            var getDomainDtos = await Task.WhenAll(taskIsRented);
+
+            var paginatedDomains = new PaginatedCollection<GetDomainDto>(
+                getDomainDtos,
                 totalCount,
                 pagination.Page);
             
@@ -109,12 +114,12 @@ namespace DataAccess.SQLite.Domains
         }
 
         public async Task<PaginatedRentedDomains> GetRentedAsync(
-            IEnumerable<Expression<Func<RentedDomainModel, bool>>> filters, 
+            IEnumerable<Expression<Func<RentedDomainModel, bool>>> filters,
             Pagination<RentedDomainModel> pagination, CancellationToken cancellationToken)
         {
             IQueryable<RentedDomainModel> rentedDomains = _appContext.RentedDomains;
 
-            foreach(var filter in filters)
+            foreach (var filter in filters)
                 rentedDomains = rentedDomains.Where(filter);
 
             IEnumerable<RentedDomainModel> list = rentedDomains.ToList();
