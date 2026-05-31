@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using FluentValidation;
 using Services.Domains;
 using Services.Hosted;
+using Services.Receipts;
 
 namespace Services
 {
@@ -15,6 +16,8 @@ namespace Services
             services.AddHostedService<DomainExpiryCheckService>();
 
             services.AddScoped<IDomainsService, DomainsService>();
+            services.AddScoped<IReceiptsService, ReceiptsService>();
+
             services.AddSQLiteServices();
 
             return services;

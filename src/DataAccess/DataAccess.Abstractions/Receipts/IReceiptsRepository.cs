@@ -1,4 +1,5 @@
 ﻿using Contracts.Users;
+using DomainModels.Receipts;
 
 namespace DataAccess.Abstractions.Receipts
 {
@@ -14,6 +15,10 @@ namespace DataAccess.Abstractions.Receipts
         Task<Guid> AddAsync(
             Guid domainId,
             UserDto user, 
+            CancellationToken cancellationToken);
+
+        Task<ReceiptModel> GetByIdAsync(
+            Guid id, 
             CancellationToken cancellationToken);
     }
 }
