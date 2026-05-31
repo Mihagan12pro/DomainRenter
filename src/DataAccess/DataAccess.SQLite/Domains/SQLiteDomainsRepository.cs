@@ -18,7 +18,9 @@ namespace DataAccess.SQLite.Domains
             _appContext = appContext;
         }
 
-        public async Task<Guid> AddAsync(string domainName, CancellationToken cancellationToken)
+        public async Task<Guid> AddAsync(
+            string domainName,
+            CancellationToken cancellationToken)
         {
             DomainModel domainModel = new DomainModel()
             {

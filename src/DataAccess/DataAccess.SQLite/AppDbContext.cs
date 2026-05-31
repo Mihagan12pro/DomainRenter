@@ -1,5 +1,5 @@
-﻿using DomainModels.ClaimChecks;
-using DomainModels.Domains;
+﻿using DomainModels.Domains;
+using DomainModels.Receipts;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 

@@ -1,11 +1,8 @@
 ﻿using DataAccess.Abstractions.Domains;
+using DataAccess.Abstractions.Receipts;
 using DataAccess.SQLite.Domains;
+using DataAccess.SQLite.Receipts;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DataAccess.SQLite
 {
@@ -16,6 +13,7 @@ namespace DataAccess.SQLite
             services.AddDbContext<AppDbContext>();
 
             services.AddScoped<IDomainsRepository, SQLiteDomainsRepository>();
+            services.AddScoped<IReceiptsRepository, SQLiteReceiptsRepository>();
 
             return services;
         }

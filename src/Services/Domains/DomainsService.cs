@@ -1,5 +1,4 @@
 ﻿using Contracts.Domains;
-using Contracts.Users;
 using CSharpFunctionalExtensions;
 using DataAccess.Abstractions.Domains;
 using DomainModels.Domains;
@@ -25,6 +24,7 @@ namespace Services.Domains
             CancellationToken cancellationToken)
         {
             string domainName = rentDomainDto.DomainName.ToLowerInvariant();
+
             rentDomainDto = rentDomainDto with
             {
                 DomainName = domainName

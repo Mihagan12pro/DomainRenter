@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DomainModels.ClaimChecks
+namespace DomainModels.Receipts
 {
     public class ReceiptModel
     {
@@ -19,7 +19,7 @@ namespace DomainModels.ClaimChecks
         public required string Email { get; set; }
 
         [Phone()]
-        public required string PhoneNumber { get; set; }
+        public required string Phone { get; set; }
 
         [Column("from")]
         public required DateOnly StartOfRenting { get; set; }
@@ -27,14 +27,14 @@ namespace DomainModels.ClaimChecks
         [Column("to")]
         public required DateOnly EndOfRenting { get; set; }
 
-        public string CompanyName { get; } = "ООО «Домены24»";
+        public string CompanyName { get; private set; } = "ООО «Домены24»";
 
-        public int INN { get; } = 1234567890;
+        public int INN { get; private set; } = 1234567890;
 
-        public string CompanyAddress = "г. N, ул. n, д. 1";
+        public string CompanyAddress { get; private set; } = "г. N, ул. n, д. 1";
 
-        public string CompanyEmail { get; } = "renting@domains24.ru";
+        public string CompanyEmail { get; private set; } = "renting@domains24.ru";
 
-        public string CompanyPhone { get; } = "+7 (xxx) xxx-xx-xx";
+        public string CompanyPhone { get; private set; } = "+7 (xxx) xxx-xx-xx";
     }
 }
