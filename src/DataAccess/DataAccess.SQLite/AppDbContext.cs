@@ -1,4 +1,5 @@
-﻿using DomainModels.Domains;
+﻿using DomainModels.ClaimChecks;
+using DomainModels.Domains;
 using Microsoft.EntityFrameworkCore;
 using System.Reflection;
 
@@ -6,7 +7,7 @@ namespace DataAccess.SQLite
 {
     public class AppDbContext : DbContext
     {
-
+        public DbSet<Receipt> Receipts { get; set; }
 
         public DbSet<DomainModel> Domains { get; set; }
 
