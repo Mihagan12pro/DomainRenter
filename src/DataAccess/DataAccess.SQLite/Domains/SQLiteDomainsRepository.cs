@@ -3,6 +3,8 @@ using DomainModels.Domains;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq.Expressions;
+using Utils.Pagination;
+using Utils.Pagination.Collections.Types.Domains;
 
 namespace DataAccess.SQLite.Domains
 {
@@ -84,22 +86,57 @@ namespace DataAccess.SQLite.Domains
             }
         }
 
-        public async Task<IEnumerable<DomainModel>> GetAllAsync(
-            Expression<Func<DomainModel, bool>> filter, 
-            CancellationToken cancellationToken)
+        public async Task<PaginatedDomains> GetAllAsync(
+            IEnumerable<Expression<Func<DomainModel, bool>>> filters,
+            Pagination<DomainModel> pagination, CancellationToken cancellationToken)
         {
-            var domains = _appContext.Domains.Where(filter);
+            IQueryable<DomainModel> domains = _appContext.Domains;
 
-            return domains;
+            foreach (var filter in filters)
+                domains = domains.Where(filter);
+
+            IEnumerable<DomainModel> list = domains.ToList();
+            int totalCount = list.Count();
+
+            list = pagination.Apply(list);
+
+            PaginatedDomains paginatedDomains = new PaginatedDomains(
+                list,
+                totalCount,
+                pagination.Page);
+            
+            return paginatedDomains;
         }
 
-        public async Task<IEnumerable<RentedDomainModel>> GetRentedAsync(
-            Expression<Func<RentedDomainModel, bool>> filter, 
+        public async Task<PaginatedRentedDomains> GetRentedAsync(
+            IEnumerable<Expression<Func<RentedDomainModel, bool>>> filters, 
+            Pagination<RentedDomainModel> pagination, CancellationToken cancellationToken)
+        {
+            IQueryable<RentedDomainModel> rentedDomains = _appContext.RentedDomains;
+
+            foreach(var filter in filters)
+                rentedDomains = rentedDomains.Where(filter);
+
+            IEnumerable<RentedDomainModel> list = rentedDomains.ToList();
+            int totalCount = list.Count();
+
+            list = pagination.Apply(list);
+
+            PaginatedRentedDomains paginatedRentedDomains = new PaginatedRentedDomains(
+                list,
+                totalCount,
+                pagination.Page);
+
+            return paginatedRentedDomains;
+        }
+
+        public async Task<DomainModel> GetByIdAsync(
+            Guid id, 
             CancellationToken cancellationToken)
         {
-            var rented = _appContext.RentedDomains.Where(filter);
+            DomainModel model = await _appContext.Domains.FirstOrDefaultAsync(d => d.Id == id, cancellationToken);
 
-            return rented;
+            return model;
         }
     }
 }

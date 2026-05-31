@@ -1,5 +1,8 @@
 ﻿using DomainModels.Domains;
+using System;
 using System.Linq.Expressions;
+using Utils.Pagination;
+using Utils.Pagination.Collections.Types.Domains;
 
 namespace DataAccess.Abstractions.Domains
 {
@@ -11,6 +14,10 @@ namespace DataAccess.Abstractions.Domains
 
         Task<DomainModel?> GetByNameAsync(
             string domainName,
+            CancellationToken cancellationToken);
+
+        Task<DomainModel> GetByIdAsync(
+            Guid id, 
             CancellationToken cancellationToken);
 
         Task<bool> IsRentedAsync(
@@ -26,12 +33,14 @@ namespace DataAccess.Abstractions.Domains
             Guid id,
             CancellationToken cancellationToken);
 
-        Task<IEnumerable<DomainModel>> GetAllAsync(
-            Expression<Func<DomainModel, bool>> filters,
+        public Task<PaginatedDomains> GetAllAsync(
+            IEnumerable<Expression<Func<DomainModel, bool>>> filters,
+            Pagination<DomainModel> pagination,
             CancellationToken cancellationToken);
 
-        Task<IEnumerable<RentedDomainModel>> GetRentedAsync(
-            Expression<Func<RentedDomainModel, bool>> filters,
+        public Task<PaginatedRentedDomains> GetRentedAsync(
+            IEnumerable<Expression<Func<RentedDomainModel, bool>>> filters,
+            Pagination<RentedDomainModel> pagination,
             CancellationToken cancellationToken);
     }
 }

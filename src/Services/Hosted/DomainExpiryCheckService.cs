@@ -1,6 +1,9 @@
 ﻿using DataAccess.Abstractions.Domains;
+using DomainModels.Domains;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System.Linq.Expressions;
+using Utils.Pagination;
 
 namespace Services.Hosted
 {
@@ -21,10 +24,11 @@ namespace Services.Hosted
                     IDomainsRepository domainsRepository = scope.ServiceProvider.GetRequiredService<IDomainsRepository>();
 
                     var expired = await domainsRepository.GetRentedAsync(
-                        (rd => rd.EndOfRenting <= now),
+                        new List<Expression<Func<RentedDomainModel, bool>>> { (rd => rd.EndOfRenting <= now) },
+                        new Pagination<RentedDomainModel>(),
                         stoppingToken);
 
-                    foreach(var e in expired)
+                    foreach(var e in expired.Collection)
                     {
                         await domainsRepository.EndRentAsync(e.DomainId, stoppingToken);
                     }

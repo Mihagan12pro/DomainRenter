@@ -3,7 +3,10 @@ using CSharpFunctionalExtensions;
 using DataAccess.Abstractions.Domains;
 using DomainModels.Domains;
 using FluentValidation;
+using System.Linq.Expressions;
 using Utils.Errors;
+using Utils.Pagination;
+using Utils.Pagination.Collections;
 using Utils.Success;
 
 namespace Services.Domains
@@ -101,6 +104,39 @@ namespace Services.Domains
             await _domainsRepository.EndRentAsync(domain.Id, cancellationToken);
 
             return new Success();
+        }
+
+        public async Task<PaginatedCollection<string>> GetRentedDomainsAsync(
+            RentedDomainsFiltersDto filters,
+            Pagination<string> pagination,
+            CancellationToken cancellationToken)
+        {
+            List<Expression<Func<RentedDomainModel, bool>>> filtersList = new List<Expression<Func<RentedDomainModel, bool>>>();
+
+            var rented = await _domainsRepository.GetRentedAsync(
+                filtersList,
+                new Pagination<RentedDomainModel>(pagination.Page, pagination.Size), 
+                cancellationToken
+            );
+
+            var domainTasks = rented.Collection.Select(async rd => await _domainsRepository.GetByIdAsync(rd.DomainId, cancellationToken));
+            var domainsNames = (await Task.WhenAll(domainTasks)).Select(d => d.Name);
+
+            var paginated = new PaginatedCollection<string>(
+                    domainsNames,
+                    rented.TotalCount,
+                    rented.Page
+                );
+
+            return paginated;
+        }
+
+        public Task<PaginatedCollection<GetDomainDto>> GetDomainsAsync(
+            DomainFiltersDto domainFilters,
+            Pagination<GetDomainDto> pagination, 
+            CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
         }
 
         public DomainsService(
