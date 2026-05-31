@@ -44,6 +44,15 @@ namespace DataAccess.SQLite.Receipts
             return receipt.Id;
         }
 
+        public async Task<ReceiptModel> GetByIdAsync(
+            Guid id,
+            CancellationToken cancellationToken)
+        {
+            ReceiptModel receipt = await _appDbContext.Receipts.FirstOrDefaultAsync(r => r.Id == id);
+
+            return receipt;
+        }
+
         public SQLiteReceiptsRepository(AppDbContext appDbContext)
         {
             _appDbContext = appDbContext;

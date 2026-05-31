@@ -27,7 +27,7 @@ namespace Server.Controllers
 
             var request = HttpContext.Request;
 
-            Success<string> success = new Success<string>($"{request.Scheme}://{request.Host}/receipts/{result.Value.Value}");
+            Success<string> success = new Success<string>($"{request.Scheme}://{request.Host}/api/receipts/{result.Value.Value}");
             
             return this.MapWithResult(success);
         }
