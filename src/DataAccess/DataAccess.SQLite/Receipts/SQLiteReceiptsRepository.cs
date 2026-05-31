@@ -37,7 +37,11 @@ namespace DataAccess.SQLite.Receipts
                 EndOfRenting = rentedDomain.EndOfRenting,
             };
 
-            throw new NotImplementedException();
+            await _appDbContext.Receipts.AddAsync(receipt, cancellationToken);
+
+            await _appDbContext.SaveChangesAsync();
+
+            return receipt.Id;
         }
 
         public SQLiteReceiptsRepository(AppDbContext appDbContext)

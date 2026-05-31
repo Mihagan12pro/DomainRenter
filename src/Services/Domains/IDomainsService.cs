@@ -9,7 +9,7 @@ namespace Services.Domains
 {
     public interface IDomainsService
     {
-        Task<Result<Success, ErrorsCollection>> RentDomainAsync(
+        Task<Result<Success<Guid>, ErrorsCollection>> RentDomainAsync(
             RentDomainDto rentDomainDto,
             CancellationToken cancellationToken);
 

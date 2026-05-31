@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Server.Extensions;
 using Services.Domains;
 using Utils.Pagination;
+using Utils.Success;
 
 namespace Server.Controllers
 {
@@ -14,17 +15,21 @@ namespace Server.Controllers
 
         [HttpPost]
         public async Task<IActionResult> Rent(
-            [FromBody] RentDomainDto request,
+            [FromBody] RentDomainDto rentDomainDto,
             CancellationToken cancellationToken)
         {
             var result = await _domainsService.RentDomainAsync(
-                request,
+                rentDomainDto,
                 cancellationToken);
 
             if (result.IsFailure)
                 return this.MapWithResult(result.Error);
 
-            return this.MapWithResult(result.Value);
+            var request = HttpContext.Request;
+
+            Success<string> success = new Success<string>($"{request.Scheme}://{request.Host}/receipts/{result.Value.Value}");
+            
+            return this.MapWithResult(success);
         }
 
         [HttpGet("{name}")]

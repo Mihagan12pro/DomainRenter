@@ -1,6 +1,7 @@
 ﻿using Contracts.Domains;
 using CSharpFunctionalExtensions;
 using DataAccess.Abstractions.Domains;
+using DataAccess.Abstractions.Receipts;
 using DomainModels.Domains;
 using FluentValidation;
 using System.Linq.Expressions;
@@ -14,12 +15,14 @@ namespace Services.Domains
     internal class DomainsService : IDomainsService
     {
         private readonly IDomainsRepository _domainsRepository;
+        private readonly IReceiptsRepository _receiptsRepository;
+
         private readonly IValidator<RentDomainDto> _rentDomainValidator;
 
         private readonly SemaphoreSlim _semaphore
             = new SemaphoreSlim(1, 1);
 
-        public async Task<Result<Success, ErrorsCollection>> RentDomainAsync(
+        public async Task<Result<Success<Guid>, ErrorsCollection>> RentDomainAsync(
             RentDomainDto rentDomainDto, 
             CancellationToken cancellationToken)
         {
@@ -37,7 +40,7 @@ namespace Services.Domains
             }
 
             string message = "The domain had been rented!";
-            Result<Success, ErrorsCollection> result;
+            Result<Success<Guid>, ErrorsCollection> result;
 
             var domainModel = await _domainsRepository.GetByNameAsync(rentDomainDto.DomainName, cancellationToken);
             if (domainModel == null)
@@ -47,9 +50,12 @@ namespace Services.Domains
                     await _semaphore.WaitAsync();
 
                     Guid id = await _domainsRepository.AddAsync(rentDomainDto.DomainName, cancellationToken);
-                    await _domainsRepository.RentAsync(id, rentDomainDto.EndRentDate, cancellationToken);
+                    Guid domainId = await _domainsRepository.RentAsync(id, rentDomainDto.EndRentDate, cancellationToken);
 
-                    result = new Success();
+
+                    Guid receiptId = await _receiptsRepository.AddAsync(domainId, rentDomainDto.UserDto, cancellationToken);
+
+                    result = new Success<Guid>(receiptId);
                 }
                 finally
                 {
@@ -64,9 +70,10 @@ namespace Services.Domains
                     {
                         await _semaphore.WaitAsync();
 
-                        await _domainsRepository.RentAsync(domainModel.Id, rentDomainDto.EndRentDate, cancellationToken);
+                        Guid domainId = await _domainsRepository.RentAsync(domainModel.Id, rentDomainDto.EndRentDate, cancellationToken);
+                        Guid receiptId = await _receiptsRepository.AddAsync(domainId, rentDomainDto.UserDto, cancellationToken);
 
-                        result = new Success();
+                        result = new Success<Guid>(receiptId);
                     }
                     finally
                     {
@@ -160,9 +167,12 @@ namespace Services.Domains
 
         public DomainsService(
             IDomainsRepository domainsRepository,
+            IReceiptsRepository receiptsRepository,
             IValidator<RentDomainDto> rentDomainValidator)
         {
             _domainsRepository = domainsRepository;
+            _receiptsRepository = receiptsRepository;
+
             _rentDomainValidator = rentDomainValidator;
         }
     }
