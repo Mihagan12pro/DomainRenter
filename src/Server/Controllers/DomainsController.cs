@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using Server.Extensions;
 using Services.Domains;
 using Utils.Pagination;
-using Utils.Pagination.Collections.Types.Domains;
 
 namespace Server.Controllers
 {
