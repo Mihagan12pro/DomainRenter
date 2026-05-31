@@ -36,5 +36,7 @@ namespace DomainModels.Receipts
         public string CompanyEmail { get; private set; } = "renting@domains24.ru";
 
         public string CompanyPhone { get; private set; } = "+7 (xxx) xxx-xx-xx";
+
+        public decimal Price { get; set; }
     }
 }
