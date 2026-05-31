@@ -1,7 +1,8 @@
-﻿using DomainModels.Domains;
-using System;
+﻿using Contracts.Domains;
+using DomainModels.Domains;
 using System.Linq.Expressions;
 using Utils.Pagination;
+using Utils.Pagination.Collections;
 using Utils.Pagination.Collections.Types.Domains;
 
 namespace DataAccess.Abstractions.Domains
@@ -33,7 +34,7 @@ namespace DataAccess.Abstractions.Domains
             Guid id,
             CancellationToken cancellationToken);
 
-        public Task<PaginatedDomains> GetAllAsync(
+        public Task<PaginatedCollection<GetDomainDto>> GetAllAsync(
             IEnumerable<Expression<Func<DomainModel, bool>>> filters,
             Pagination<DomainModel> pagination,
             CancellationToken cancellationToken);

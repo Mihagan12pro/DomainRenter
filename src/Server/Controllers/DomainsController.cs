@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Server.Extensions;
 using Services.Domains;
+using Utils.Pagination;
+using Utils.Pagination.Collections.Types.Domains;
 
 namespace Server.Controllers
 {
@@ -40,7 +42,7 @@ namespace Server.Controllers
         }
 
         [HttpDelete("{name}")]
-        public async Task<IActionResult> EndRentAsync(
+        public async Task<IActionResult> EndRent(
             [FromRoute] string name,
             CancellationToken cancellationToken)
         {
@@ -50,6 +52,22 @@ namespace Server.Controllers
                 return this.MapWithResult(result.Error);
 
             return this.MapWithResult(result.Value);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetDomains(
+            string? name,
+            int page = 1,
+            int size = 5,
+            CancellationToken cancellationToken = default)
+        {
+            var result = await _domainsService.GetDomainsAsync(
+                new DomainFiltersDto(name), 
+                new Pagination<GetDomainDto>(page, size), 
+                cancellationToken
+            );
+
+            return Ok(result);
         }
 
         public DomainsController(IDomainsService domainsService)
