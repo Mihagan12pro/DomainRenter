@@ -40,7 +40,7 @@
     <label>
       Отчество
       <input type="text" pattern="[А-ЯЁ][а-яё]+(-[А-ЯЁ][а-яё]+)?" title="Введите отчество с большой буквы"
-        placeholder="Иванович"/>
+        placeholder="Иванович" />
     </label>
 
     <label>
@@ -55,6 +55,30 @@
     <button id="submitBtn" class="submit" type="submit">Отправить форму</button>
     <button id="resetBtn" class="reset" type="reset">Очистить форму</button>
   </form>
+  
+  <script>
+    const submitButton = document.getElementById('submitBtn');
+    const resetButton = document.getElementById('resetBtn');
+    const form = document.querySelector('form');
+
+    function checkFormValidity() {
+      const inputs = form.querySelectorAll('input');
+      let isValid = true;
+
+      inputs.forEach(input => {
+        if (!input.checkValidity()) {
+          isValid = false;
+        }
+      });
+
+      submitButton.disabled = !isValid;
+      resetButton.disabled = false;
+    }
+
+    form.addEventListener('input', checkFormValidity);
+    document.addEventListener('DOMContentLoaded', checkFormValidity);
+  </script>
+
 </body>
 
 </html>
