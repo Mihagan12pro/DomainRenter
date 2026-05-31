@@ -35,6 +35,8 @@ namespace DataAccess.SQLite.Receipts
                 StartOfRenting = rentedDomain.StartOfRenting,
 
                 EndOfRenting = rentedDomain.EndOfRenting,
+
+                Price = (rentedDomain.EndOfRenting.DayNumber - rentedDomain.StartOfRenting.DayNumber) * 300
             };
 
             await _appDbContext.Receipts.AddAsync(receipt, cancellationToken);
