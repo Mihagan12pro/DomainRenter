@@ -70,6 +70,21 @@ namespace Server.Controllers
             return Ok(result);
         }
 
+        [HttpGet("rented")]
+        public async Task<IActionResult> GetRentedDomain(
+            int page = 1,
+            int size = 5,
+            CancellationToken cancellationToken = default)
+        {
+            var result = await _domainsService.GetRentedDomainsAsync(
+                new RentedDomainsFiltersDto(),
+                new Pagination<string>(page, size),
+                cancellationToken
+            );
+
+            return Ok(result);
+        }
+
         public DomainsController(IDomainsService domainsService)
         {
             _domainsService = domainsService;
