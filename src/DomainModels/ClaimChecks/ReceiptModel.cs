@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DomainModels.ClaimChecks
 {
-    public class Receipt
+    public class ReceiptModel
     {
         public Guid Id { get; private set; }
 

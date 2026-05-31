@@ -1,7 +1,10 @@
-﻿namespace Contracts.Domains
+﻿using Contracts.Users;
+
+namespace Contracts.Domains
 {
     public record RentDomainDto(
             string DomainName,
-            DateOnly EndRentDate
+            DateOnly EndRentDate,
+            UserDto UserDto
         );
 }

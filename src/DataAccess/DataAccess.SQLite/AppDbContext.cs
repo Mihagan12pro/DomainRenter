@@ -7,7 +7,7 @@ namespace DataAccess.SQLite
 {
     public class AppDbContext : DbContext
     {
-        public DbSet<Receipt> Receipts { get; set; }
+        public DbSet<ReceiptModel> Receipts { get; set; }
 
         public DbSet<DomainModel> Domains { get; set; }
 
