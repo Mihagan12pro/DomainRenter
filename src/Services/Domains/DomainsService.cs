@@ -53,7 +53,7 @@ namespace Services.Domains
                     Guid domainId = await _domainsRepository.RentAsync(id, rentDomainDto.EndRentDate, cancellationToken);
 
 
-                    Guid receiptId = await _receiptsRepository.AddAsync(domainId, rentDomainDto.UserDto, cancellationToken);
+                    Guid receiptId = await _receiptsRepository.AddAsync(domainId, rentDomainDto.User, cancellationToken);
 
                     result = new Success<Guid>(receiptId);
                 }
@@ -71,7 +71,7 @@ namespace Services.Domains
                         await _semaphore.WaitAsync();
 
                         Guid domainId = await _domainsRepository.RentAsync(domainModel.Id, rentDomainDto.EndRentDate, cancellationToken);
-                        Guid receiptId = await _receiptsRepository.AddAsync(domainId, rentDomainDto.UserDto, cancellationToken);
+                        Guid receiptId = await _receiptsRepository.AddAsync(domainId, rentDomainDto.User, cancellationToken);
 
                         result = new Success<Guid>(receiptId);
                     }
