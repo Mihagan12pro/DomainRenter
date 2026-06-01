@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Чек аренды домена</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+        rel="stylesheet">
+    <!-- Подключаем ваши основные стили -->
+    <link rel="stylesheet" href="./styles/style.css">
+    <!-- Дополнительные стили для чека (не ломают основную форму) -->
+    <style>
+        /* Стили только для страницы чека – наследуют цвета и шрифты из style.css */
+        .receipt-container {
+            max-width: 800px;
+            width: 100%;
+            margin: 2rem auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .receipt-header {
+            background: #B4D3D9;
+            /* такой же как у формы в index.html */
+            padding: 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .receipt-header h1 {
+            margin: 0 0 0.5rem;
+            font-size: 1.8rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #000;
+        }
+
+        .receipt-id {
+            font-size: 0.8rem;
+            color: #333;
+            word-break: break-all;
+        }
+
+        .receipt-body {
+            padding: 2rem;
+        }
+
+        .domain-section {
+            background: #EAEFEF;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .domain-name {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #000;
+            word-break: break-all;
+        }
+
+        .rental-period {
+            display: flex;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-top: 1rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .info-card {
+            background: #f5f5f5;
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+
+        .info-card h3 {
+            margin: 0 0 0.5rem;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #555;
+        }
+
+        .info-card p {
+            margin: 0.3rem 0;
+            font-weight: 600;
+        }
+
+        .company-details {
+            background: #EAEFEF;
+            padding: 1.2rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+
+        .company-details h3 {
+            margin: 0 0 0.8rem;
+            font-size: 1rem;
+            font-weight: 800;
+        }
+
+        .company-details p {
+            margin: 0.3rem 0;
+            font-size: 0.9rem;
+        }
+
+        .price {
+            text-align: right;
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #408A71;
+            border-top: 2px dashed #ccc;
+            padding-top: 1rem;
+            margin-top: 1rem;
+        }
+
+        .receipt-actions {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .receipt-actions button {
+            background: #408A71;
+            border: 1px solid #000;
+            padding: 8px 20px;
+            font-weight: 800;
+            text-transform: uppercase;
+            cursor: pointer;
+        }
+
+        .receipt-actions button:hover {
+            box-shadow: inset 0 0 0 100px rgba(0, 0, 0, 0.15);
+        }
+
+        .receipt-actions button:last-child {
+            background: #ffc802;
+        }
+
+        .loading,
+        .error {
+            text-align: center;
+            padding: 3rem;
+            font-size: 1.2rem;
+        }
+
+        .error {
+            color: #FF5A5A;
+        }
+
+        @media (max-width: 600px) {
+            .receipt-body {
+                padding: 1rem;
+            }
+
+            .domain-name {
+                font-size: 1.4rem;
+            }
+
+            .price {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="receipt-container" id="receiptContainer">
+        <div class="loading">Загрузка чека...</div>
+    </div>
+
+    <script>
+        function getReceiptId() {
+            const params = new URLSearchParams(window.location.search);
+            let id = params.get('id');
+            if (!id) {
+                const pathParts = window.location.pathname.split('/');
+                const lastPart = pathParts[pathParts.length - 1];
+                if (lastPart && lastPart.length > 20) id = lastPart;
+            }
+            return id;
+        }
+
+        async function loadReceipt() {
+            const receiptId = getReceiptId();
+            const container = document.getElementById('receiptContainer');
+
+            if (!receiptId) {
+                container.innerHTML = `
+          <div class="error">
+            ❌ Не указан ID чека<br>
+            <small>Используйте ?id=... в адресной строке</small>
+          </div>
+        `;
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:5070/api/receipts/${receiptId}`);
+                if (!response.ok) throw new Error(`Ошибка ${response.status}`);
+                const data = await response.json();
+
+                const startDate = new Date(data.startOfRenting).toLocaleDateString('ru-RU');
+                const endDate = new Date(data.endOfRenting).toLocaleDateString('ru-RU');
+                const price = new Intl.NumberFormat('ru-RU').format(data.price) + ' ₽';
+
+                container.innerHTML = `
+          <div class="receipt-header">
+            <h1>КВИТАНЦИЯ № ${data.id.slice(0, 8)}</h1>
+            <div class="receipt-id">ID: ${data.id}</div>
+          </div>
+          <div class="receipt-body">
+            <div class="domain-section">
+              <div class="domain-name">${escapeHtml(data.domainName)}</div>
+              <div class="rental-period">
+                <span>📅 Аренда с ${startDate}</span>
+                <span>⏱️ по ${endDate}</span>
+              </div>
+            </div>
+
+            <div class="info-grid">
+              <div class="info-card">
+                <h3>Арендатор</h3>
+                <p>${escapeHtml(data.surname)} ${escapeHtml(data.name)}</p>
+                ${data.patronymic ? `<p>${escapeHtml(data.patronymic)}</p>` : ''}
+              </div>
+              <div class="info-card">
+                <h3>Контакты</h3>
+                <p>📧 ${escapeHtml(data.email)}</p>
+                <p>📞 ${escapeHtml(data.phone)}</p>
+              </div>
+            </div>
+
+            <div class="company-details">
+              <h3>🏢 Поставщик услуг</h3>
+              <p><strong>${escapeHtml(data.companyName)}</strong></p>
+              <p>ИНН: ${data.inn}</p>
+              <p>📍 ${escapeHtml(data.companyAddress)}</p>
+              <p>📧 ${escapeHtml(data.companyEmail)}</p>
+              <p>📞 ${escapeHtml(data.companyPhone)}</p>
+            </div>
+
+            <div class="price">
+              ИТОГО: ${price}
+            </div>
+            <div class="receipt-actions">
+              <button onclick="window.print()">🖨️ Распечатать</button>
+              <button onclick="window.close()">✖️ Закрыть</button>
+            </div>
+          </div>
+        `;
+            } catch (err) {
+                container.innerHTML = `
+          <div class="error">
+            ❌ Не удалось загрузить чек<br>
+            <small>${escapeHtml(err.message)}</small><br><br>
+            <button class="submit" onclick="location.reload()">Обновить</button>
+          </div>
+        `;
+            }
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/[&<>]/g, function (m) {
+                if (m === '&') return '&amp;';
+                if (m === '<') return '&lt;';
+                if (m === '>') return '&gt;';
+                return m;
+            });
+        }
+
+        loadReceipt();
+    </script>
+</body>
+
+</html>
