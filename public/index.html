@@ -120,11 +120,21 @@
         const responseText = await response.text();
 
         if (response.ok) {
-          try {
-            const result = JSON.parse(responseText);
-            alert('✅ Успешно отправлено! Ответ: ' + JSON.stringify(result));
-          } catch (e) {
-            alert(`✅ Успешно (статус ${response.status}), но ответ не JSON:\n${responseText}`);
+          // Если ответ похож на URL (начинается с http:// или https://)
+          if (responseText.trim().startsWith('http://') || responseText.trim().startsWith('https://')) {
+            const receiptUrl = responseText.trim();
+            const userConfirmed = confirm(`✅ Домен успешно арендован!\n\nЧек доступен по адресу:\n${receiptUrl}\n\nОткрыть чек в новой вкладке?`);
+            if (userConfirmed) {
+              window.open(receiptUrl, '_blank');
+            }
+          } else {
+            // Иначе пробуем распарсить как JSON (на случай, если вернётся JSON)
+            try {
+              const result = JSON.parse(responseText);
+              alert('✅ Успешно отправлено! Ответ сервера: ' + JSON.stringify(result));
+            } catch (e) {
+              alert(`✅ Успешно (статус ${response.status}), но ответ не распознан:\n${responseText}`);
+            }
           }
           form.reset();
           checkFormValidity();
