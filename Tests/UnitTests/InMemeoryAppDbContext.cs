@@ -1,6 +1,5 @@
 ﻿using DataAccess.SQLite.DbContexts;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 
 namespace UnitTests
 {

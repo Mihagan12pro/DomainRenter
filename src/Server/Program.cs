@@ -3,49 +3,55 @@ using Microsoft.EntityFrameworkCore;
 using Server;
 using System;
 
-var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-
-builder.Services.AddApplicationServices();
-
-builder.Services.AddCors(options =>
+public partial class Program
 {
-    options.AddPolicy("AllowFrontend", policy =>
+    private static void Main(string[] args)
     {
-        policy.WithOrigins("http://127.0.0.1:5500", "http://localhost:5500")
-              .AllowAnyMethod()
-              .AllowAnyHeader();
-    });
-});
+        var builder = WebApplication.CreateBuilder(args);
 
-var app = builder.Build();
+        // Add services to the container.
 
-app.UseCors("AllowFrontend");
+        builder.Services.AddControllers();
+        // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+        builder.Services.AddEndpointsApiExplorer();
+        builder.Services.AddSwaggerGen();
 
-using (var scope = app.Services.CreateScope())
-{
-    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContextBase>();
-    dbContext.Database.Migrate();  
+        builder.Services.AddApplicationServices();
+
+        builder.Services.AddCors(options =>
+        {
+            options.AddPolicy("AllowFrontend", policy =>
+            {
+                policy.WithOrigins("http://127.0.0.1:5500", "http://localhost:5500")
+                      .AllowAnyMethod()
+                      .AllowAnyHeader();
+            });
+        });
+
+        var app = builder.Build();
+
+        app.UseCors("AllowFrontend");
+
+        using (var scope = app.Services.CreateScope())
+        {
+            var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContextBase>();
+            dbContext.Database.Migrate();
+        }
+
+
+        // Configure the HTTP request pipeline.
+        if (app.Environment.IsDevelopment())
+        {
+            app.UseSwagger();
+            app.UseSwaggerUI();
+        }
+
+        app.UseHttpsRedirection();
+
+        app.UseAuthorization();
+
+        app.MapControllers();
+
+        app.Run();
+    }
 }
-
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
-
-app.Run();
