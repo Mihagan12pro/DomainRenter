@@ -1,5 +1,6 @@
 ﻿using Contracts.Domains;
 using DataAccess.Abstractions.Domains;
+using DataAccess.SQLite.DbContexts;
 using DomainModels.Domains;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
@@ -11,9 +12,9 @@ namespace DataAccess.SQLite.Domains
 {
     internal class SQLiteDomainsRepository : IDomainsRepository
     {
-        private readonly AppDbContext _appContext;
+        private readonly AppDbContextBase _appContext;
 
-        public SQLiteDomainsRepository(AppDbContext appContext)
+        public SQLiteDomainsRepository(AppDbContextBase appContext)
         {
             _appContext = appContext;
         }

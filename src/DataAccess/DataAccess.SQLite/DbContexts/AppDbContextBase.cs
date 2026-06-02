@@ -1,11 +1,16 @@
 ﻿using DomainModels.Domains;
 using DomainModels.Receipts;
 using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace DataAccess.SQLite
+namespace DataAccess.SQLite.DbContexts
 {
-    public class AppDbContext : DbContext
+    public abstract class AppDbContextBase : DbContext
     {
         public DbSet<ReceiptModel> Receipts { get; set; }
 
@@ -13,20 +18,19 @@ namespace DataAccess.SQLite
 
         public DbSet<RentedDomainModel> RentedDomains { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        public AppDbContextBase()
         {
-            optionsBuilder.UseSqlite("Data Source=database.db");
-            SQLitePCL.Batteries.Init();
+            
+        }
+
+        public AppDbContextBase(DbContextOptions options) : base(options) 
+        {
+            
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
             => modelBuilder.ApplyConfigurationsFromAssembly(
                 Assembly.GetExecutingAssembly()
                 );
-
-        public AppDbContext()
-        {
-            Database.Migrate();
-        }
     }
 }

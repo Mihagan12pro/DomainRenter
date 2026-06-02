@@ -1,4 +1,4 @@
-using DataAccess.SQLite;
+using DataAccess.SQLite.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Server;
 using System;
@@ -30,7 +30,7 @@ app.UseCors("AllowFrontend");
 
 using (var scope = app.Services.CreateScope())
 {
-    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContextBase>();
     dbContext.Database.Migrate();  
 }
 

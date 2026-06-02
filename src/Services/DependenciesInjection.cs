@@ -6,7 +6,7 @@ using Services.Hosted;
 using Services.Receipts;
 using System.Runtime.CompilerServices;
 
-[assembly: InternalsVisibleTo("IntegrationTests")]
+[assembly: InternalsVisibleTo("UnitTests")]
 namespace Services
 {
     public static class DependenciesInjection

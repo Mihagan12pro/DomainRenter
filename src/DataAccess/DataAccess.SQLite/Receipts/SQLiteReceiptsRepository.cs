@@ -1,5 +1,6 @@
 ﻿using Contracts.Users;
 using DataAccess.Abstractions.Receipts;
+using DataAccess.SQLite.DbContexts;
 using DomainModels.Domains;
 using DomainModels.Receipts;
 using Microsoft.EntityFrameworkCore;
@@ -8,7 +9,7 @@ namespace DataAccess.SQLite.Receipts
 {
     internal class SQLiteReceiptsRepository : IReceiptsRepository
     {
-        private readonly AppDbContext _appDbContext;
+        private readonly AppDbContextBase _appDbContext;
 
         public async Task<Guid> AddAsync(
             Guid domainId,
@@ -55,7 +56,7 @@ namespace DataAccess.SQLite.Receipts
             return receipt;
         }
 
-        public SQLiteReceiptsRepository(AppDbContext appDbContext)
+        public SQLiteReceiptsRepository(AppDbContextBase appDbContext)
         {
             _appDbContext = appDbContext;
         }
