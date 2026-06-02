@@ -1,7 +1,6 @@
 using DataAccess.SQLite.DbContexts;
 using Microsoft.EntityFrameworkCore;
 using Server;
-using System;
 
 public partial class Program
 {
