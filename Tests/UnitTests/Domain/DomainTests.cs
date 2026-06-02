@@ -2,12 +2,37 @@
 using Contracts.Users;
 using Microsoft.Extensions.DependencyInjection;
 using Services.Domains;
+using Utils.Pagination;
 
 namespace UnitTests.Domain
 {
     public partial class DomainTests : UnitTests
     {
         private readonly DateOnly _now;
+
+        [Theory]
+        [MemberData(nameof(TestPaginationData))]
+        public async Task Test_Pagination(
+            Pagination<GetDomainDto> pagination,
+            int expectedCountOnPage, 
+            int expectedTotalCount)
+        {
+            CancellationTokenSource cts = new CancellationTokenSource();
+
+            var provider = CreateProvider();
+
+            IDomainsService domainsService = provider.GetRequiredService<IDomainsService>();
+
+            foreach(var i in AddRentedDomains())
+            {
+                await domainsService.RentDomainAsync(i, cts.Token);
+            }
+
+            var result = await domainsService.GetDomainsAsync(new DomainFiltersDto(null), pagination, cts.Token);
+
+            Assert.Equal(expectedCountOnPage, result.CountOnPage);
+            Assert.Equal(expectedTotalCount, result.TotalCount);
+        }
 
         [Fact]
         public async Task Test_GetNotExists()

@@ -1,73 +1,88 @@
-﻿using Contracts.Users;
+﻿using Contracts.Domains;
+using Contracts.Users;
 
 namespace UnitTests.Domain
 {
     public partial class DomainTests
     {
-        public static IEnumerable<object[]> AddValidUsersDtos()
+        public IEnumerable<RentDomainDto> AddRentedDomains()
         {
-            return
-            [
-                [
-                    "qwe.com",
+            List<RentDomainDto> rentDomainDtos = new List<RentDomainDto>()
+            {
+                new RentDomainDto(
+                    "qwe.com", 
+                    _now,
+                    new UserDto(
+                        "Иванов", 
+                        "Иван", 
+                        null, 
+                        "example@email.com", 
+                        "+7 900 900 90-89"
+                        )
+                    ),
 
-                     new UserDto(
-                         "Иванов",
-                         "Иван",
-                         "Иванович",
-                         "email@test.ru",
-                         "+7 900 900 90-90"
-                     )
-                ],
+                new RentDomainDto(
+                    "qwe.ru",
+                    _now,
+                    new UserDto(
+                        "Иванов",
+                        "Иван",
+                        null,
+                        "example@email.com",
+                        "+7 900 900 90-89"
+                        )
+                    ),
 
-                [
-                    "qwe.com",
+                new RentDomainDto(
+                    "qwe.su",
+                    _now,
+                    new UserDto(
+                        "Иванов",
+                        "Иван",
+                        null,
+                        "example@email.com",
+                        "+7 900 900 90-89"
+                        )
+                    ),
 
-                     new UserDto(
-                         "Иванов",
-                         "Иван",
-                         null,
-                         "email@test.ru",
-                         "+7 900 900 90-90"
-                     )
-                ],
+                new RentDomainDto(
+                    "qwe.gov",
+                    _now,
+                    new UserDto(
+                        "Иванов",
+                        "Иван",
+                        null,
+                        "example@email.com",
+                        "+7 900 900 90-89"
+                        )
+                    ),
 
-                [
-                    "qwe.com",
+                new RentDomainDto(
+                    "qwe.public.com",
+                    _now,
+                    new UserDto(
+                        "Иванов",
+                        "Иван",
+                        null,
+                        "example@email.com",
+                        "+7 900 900 90-89"
+                        )
+                    ),
 
-                     new UserDto(
-                         "иванов",
-                         "иван",
-                         null,
-                         "email@test.ru",
-                         "+7 900 900 90-90"
-                     )
-                ],
+                new RentDomainDto(
+                    "qwe.public.su",
+                    _now,
+                    new UserDto(
+                        "Иванов",
+                        "Иван",
+                        null,
+                        "example@email.com",
+                        "+7 900 900 90-89"
+                        )
+                    ),
+            };
 
-                [
-                    "qwe.рф",
-
-                     new UserDto(
-                         "Иванов",
-                         "Иван",
-                         null,
-                         "email@test.ru",
-                         "+7 900 900 90-90"
-                     )
-                ],
-
-                [
-                    "qwe.com",
-
-                     new UserDto(
-                         "John",
-                         "Smith",
-                         null,
-                         "email@test.ru",
-                         "+7 900 900 90-90"
-                     )
-                ],
-            ];
+            return rentDomainDtos;
         }
     }
 }
