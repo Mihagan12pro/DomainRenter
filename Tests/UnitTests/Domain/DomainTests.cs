@@ -1,6 +1,5 @@
 ﻿using Contracts.Domains;
 using Contracts.Users;
-using DataAccess.SQLite.DbContexts;
 using Microsoft.Extensions.DependencyInjection;
 using Services.Domains;
 
@@ -9,6 +8,36 @@ namespace UnitTests.Domain
     public partial class DomainTests : UnitTests
     {
         private readonly DateOnly _now;
+
+        [Fact]
+        public async Task Test_GetNotExists()
+        {
+            CancellationTokenSource cts = new CancellationTokenSource();
+
+            UserDto user = new UserDto(
+                         "Иванов",
+                         "Иван",
+                         "Иванович",
+                         "email@test.ru",
+                         "+7 900 900 90-90"
+            );
+
+            RentDomainDto rentDomainDto = new RentDomainDto(
+                "qwe.com",
+                _now,
+                user
+            );
+
+            var provider = CreateProvider();
+
+            IDomainsService domainsService = provider.GetRequiredService<IDomainsService>();
+
+            await domainsService.RentDomainAsync(rentDomainDto, cts.Token);
+
+            var result = await domainsService.GetByNameAsync("name.com", cts.Token);
+
+            Assert.Equal(false, result.IsSuccess);
+        }
 
         [Fact]
         public async Task Test_GetByNameAsync()
