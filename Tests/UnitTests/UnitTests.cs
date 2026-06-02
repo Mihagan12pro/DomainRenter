@@ -24,8 +24,11 @@ namespace UnitTests
             services.AddScoped<IReceiptsService, ReceiptsService>();
             services.AddScoped<IDomainsService, DomainsService>();
 
+            var dbName = Guid.NewGuid()
+                .ToString();
+
             services.AddDbContext<AppDbContextBase, InMemeoryAppDbContext>(options =>
-                options.UseInMemoryDatabase("Data Source=test.db"));
+                options.UseInMemoryDatabase($"Data Source={dbName}.db"));
 
             services.AddScoped<IDomainsRepository, SQLiteDomainsRepository>();
             services.AddScoped<IReceiptsRepository, SQLiteReceiptsRepository>();
