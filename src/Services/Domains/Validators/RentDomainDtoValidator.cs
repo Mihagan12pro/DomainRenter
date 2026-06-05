@@ -1,6 +1,5 @@
 ﻿using Contracts.Domains;
 using FluentValidation;
-using FluentValidation.Validators;
 
 namespace Services.Domains.Validators
 {

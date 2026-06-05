@@ -45,7 +45,7 @@ namespace IntegrationTests
             context.Database.EnsureCreated();
         }
 
-        private IServiceProvider BuildProvider()
+        protected IServiceProvider BuildProvider()
         {
             ServiceCollection services = new ServiceCollection();
 
