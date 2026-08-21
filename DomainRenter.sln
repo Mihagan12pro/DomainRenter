@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.14.36408.4
+# Visual Studio Version 18
+VisualStudioVersion = 18.10.12113.136 insiders
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
@@ -44,6 +44,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{AD4C7A13
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IntegrationTests", "Tests\IntegrationTests\IntegrationTests.csproj", "{41C22782-81C6-41C7-9286-29BB174F106A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Auth", "Authorization\src\Auth\Auth.csproj", "{C5A802DE-D240-4EE0-9BD2-6294EDEFB82F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Authorizations", "Authorizations", "{C02EC574-6A68-454C-A577-64E33B2125D4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{ADE27FB8-30E3-41FF-A75F-42591DE0F494}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -82,6 +88,10 @@ Global
 		{41C22782-81C6-41C7-9286-29BB174F106A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{41C22782-81C6-41C7-9286-29BB174F106A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{41C22782-81C6-41C7-9286-29BB174F106A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C5A802DE-D240-4EE0-9BD2-6294EDEFB82F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C5A802DE-D240-4EE0-9BD2-6294EDEFB82F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C5A802DE-D240-4EE0-9BD2-6294EDEFB82F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C5A802DE-D240-4EE0-9BD2-6294EDEFB82F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -99,6 +109,8 @@ Global
 		{2D1FA3A7-2F1C-4F41-8A84-B9EA027C0BE2} = {8702312B-0709-41FA-9DAE-30407C9A3744}
 		{0CA085D0-C3B8-43EF-B756-D739103CCD3A} = {8702312B-0709-41FA-9DAE-30407C9A3744}
 		{41C22782-81C6-41C7-9286-29BB174F106A} = {AD4C7A13-D3CA-45CD-BFF2-8356A697E7FA}
+		{C5A802DE-D240-4EE0-9BD2-6294EDEFB82F} = {ADE27FB8-30E3-41FF-A75F-42591DE0F494}
+		{ADE27FB8-30E3-41FF-A75F-42591DE0F494} = {C02EC574-6A68-454C-A577-64E33B2125D4}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A6D24FEE-5C3A-46D3-B194-9C6CAF4E016C}
